@@ -17,6 +17,7 @@ class ViewController: UIViewController {
         case Subtract = "-"
         case Add = "+"
         case Empty = "Empty"
+        case Clear = "Clear"
         
     }
     
@@ -48,11 +49,16 @@ class ViewController: UIViewController {
         
     }
     
+
     @IBAction func numberPressed(btn: UIButton!){
         playSound()
         
         runningNumber += "\(btn.tag)"
         outputLbl.text = runningNumber
+    }
+    
+    @IBAction func onClearPressed(sender: AnyObject) {
+        processOperation(Operation.Clear)
     }
     
     @IBAction func onDividePressed(sender: AnyObject) {
@@ -76,43 +82,63 @@ class ViewController: UIViewController {
     }
     
     func processOperation(op: Operation){
-       playSound()
+        playSound()
         
-        if currentOperation != Operation.Empty{
-            //run math
+        if op == Operation.Clear{
             
-            //A user selected an operator, but then selected another operator without selecting a number
-            if runningNumber != ""{
+            print("clear");
                 
-                rightValString = runningNumber
                 runningNumber = ""
+                leftValString = ""
+                rightValString = ""
+                outputLbl.text = "0"
+                result = ""
                 
-                if currentOperation == Operation.Multiply{
-                    result = "\(Double(leftValString)! * Double(rightValString)!)"
-                }else if currentOperation == Operation.Divide{
-                    result = "\(Double(leftValString)! / Double(rightValString)!)"
-                }else if currentOperation == Operation.Subtract{
-                    result = "\(Double(leftValString)! - Double(rightValString)!)"
-                }else if currentOperation == Operation.Add{
-                    result = "\(Double(leftValString)! + Double(rightValString)!)"
+                currentOperation = Operation.Empty
+            
+        }else{
+            
+            
+            if currentOperation != Operation.Empty{
+                //run math
+                
+                print("math")
+                
+                //A user selected an operator, but then selected another operator without selecting a number
+                if runningNumber != ""{
+                    
+                    rightValString = runningNumber
+                    runningNumber = ""
+                    
+                    if currentOperation == Operation.Multiply{
+                        result = "\(Double(leftValString)! * Double(rightValString)!)"
+                    }else if currentOperation == Operation.Divide{
+                        result = "\(Double(leftValString)! / Double(rightValString)!)"
+                    }else if currentOperation == Operation.Subtract{
+                        result = "\(Double(leftValString)! - Double(rightValString)!)"
+                    }else if currentOperation == Operation.Add{
+                        result = "\(Double(leftValString)! + Double(rightValString)!)"
+                    }
+                    
+                    leftValString = result
+                    outputLbl.text = result
+                    
                 }
                 
-                leftValString = result
-                outputLbl.text = result
+                
+                currentOperation = op
+                
+            } else {
+                // this is the first time an operator has been pressed
+                
+                print("first press")
+                
+                leftValString = runningNumber
+                runningNumber = ""
+                
+                currentOperation = op
                 
             }
-            
-            
-            currentOperation = op
-            
-        } else {
-            // this is the first time an operator has been pressed
-            
-            leftValString = runningNumber
-            runningNumber = ""
-            
-            currentOperation = op
-            
         }
         
     }
